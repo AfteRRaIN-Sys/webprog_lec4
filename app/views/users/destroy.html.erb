@@ -1,0 +1,14 @@
+<h1>Delete!</h1>
+
+<br>
+<%if @temp!=nil%>
+  <%="deleted! : name = #{@temp.name} , email = #{@temp.email}"%>
+<%else%>
+  <%="Nothing to be done"%>
+<%end%>
+
+
+<br><%= link_to "recreate user here!!!", "/create_fast?name=#{@temp.name}&&email=#{@temp.email}"%>
+<br><%= link_to "back to index", "/users"%>
+
+

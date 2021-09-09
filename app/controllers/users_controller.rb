@@ -52,10 +52,16 @@ class UsersController < ApplicationController
     @temp = nil
     @temp = @user
     @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: "User was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    #respond_to do |format|
+     # format.html { redirect_to users_url, notice: "User was successfully destroyed." }
+     # format.json { head :no_content }
+    #end
+  end
+
+  def create_fast
+    @re_name = params[:name]
+    @re_email = params[:email]
+    User.create(name:@re_name, email:@re_email)
   end
 
   private
