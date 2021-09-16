@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_user, only: %i[ show edit update destroy] #check_user
 
   # GET /users or /users.json
   def index
@@ -27,7 +27,8 @@ class UsersController < ApplicationController
       if @user.save
         format.html { redirect_to @user, notice: "User was successfully created." }
         format.json { render :show, status: :created, location: @user }
-      else
+      else 
+        #
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
@@ -38,10 +39,10 @@ class UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to @user, notice: "User was successfully updated." }
-        format.json { render :show, status: :ok, location: @user }
+        format.html { redirect_to @user, notice: "User was successfully updated." } #if requested format = html
+        format.json { render :show, status: :ok, location: @user } #if requested format = json
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_entity } #unprocess of html(error 422)
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
@@ -64,6 +65,24 @@ class UsersController < ApplicationController
     User.create(name:@re_name, email:@re_email)
   end
 
+  def main
+
+  end
+
+  def check_user
+    #works with main
+    #redirect_to "https://www.google.com/"
+    #puts "----------------"
+    #puts params[:email]
+    @tmp = User.find_by(email: params[:email]).pass rescue nil
+    if (@tmp == nil || @tmp != params[:pass])
+      redirect_to "https://www.google.com/"
+      puts "----------------"
+      #puts User.find(params[:email])
+    else redirect_to "/login"
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -72,6 +91,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code)
+      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass)
     end
 end
