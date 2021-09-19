@@ -1,9 +1,14 @@
 <h1>Welcome to Main!!! </h1>
-
-<form action="/check_user" target="_self" method="get">
-  <label for="email">Email</label><br>
-  <input type="text" id="email" name="email" value=""><br>
-  <label for="pass">Password:</label><br>
-  <input type="text" id="pass" name="pass" value=""><br><br>
-  <input type="submit" value="Submit">
-</form>
+<%if @ok != "error"%>
+  <form action="/check_user" target="_self" method="get">
+    <label for="email">Email</label><br>
+    <input type="text" id="email" name="email" value=""><br>
+    <label for="pass">Password:</label><br>
+    <input type="text" id="pass" name="pass" value=""><br><br>
+    <input type="submit" value="Submit">
+  </form>
+<%else%>
+  <p>You are wrong!!!!</p>
+  <%=@ok==nil%>
+  <%= link_to 'Back', "/main" %>
+<%end%>

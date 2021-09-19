@@ -66,7 +66,8 @@ class UsersController < ApplicationController
   end
 
   def main
-
+    @ok = params[:ok]
+    puts "------param ok is #{@ok}"
   end
 
   def check_user
@@ -76,10 +77,8 @@ class UsersController < ApplicationController
     #puts params[:email]
     @tmp = User.find_by(email: params[:email]).pass rescue nil
     if (@tmp == nil || @tmp != params[:pass])
-      redirect_to "https://www.google.com/"
-      puts "----------------"
-      #puts User.find(params[:email])
-    else redirect_to "/login"
+      redirect_to "/main?ok=error"
+    else redirect_to "/users/#{User.find_by(email: params[:email]).id}"
     end
   end
 
