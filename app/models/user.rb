@@ -1,5 +1,8 @@
 class User < ApplicationRecord
-	validates :email, presence: true
+
+	has_many :posts
+
+	validates :email, presence: true, uniqueness: true
 	validates :pass, presence: true, length: {minimum: 1}
 	#validates :name, length: {minimum: 2}
 
