@@ -75,11 +75,16 @@ class UsersController < ApplicationController
     #redirect_to "https://www.google.com/"
     #puts "----------------"
     #puts params[:email]
+    
+    #--------old version------------
     @tmp = User.find_by(email: params[:email]).pass rescue nil
-    if (@tmp == nil || @tmp != params[:pass])
+    #if (@tmp == nil || @tmp != params[:pass])
+    if (@tmp == nil || @tmp.authenticate params[:pass] == nil)
       redirect_to "/main?ok=error"
     else redirect_to "/users/#{User.find_by(email: params[:email]).id}"
     end
+
+
   end
 
   def create_post
@@ -95,6 +100,7 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass)
+      #dont for get to put param in this!!!!!!!!!!!!!!
+      params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass, :password)
     end
 end
