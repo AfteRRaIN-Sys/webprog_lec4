@@ -82,6 +82,11 @@ class UsersController < ApplicationController
     end
   end
 
+  def create_post
+    @post = Post.create(user_id: params[:create_id])
+    puts @post.user_id
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user

@@ -5,5 +5,7 @@ Rails.application.routes.draw do
   get "/create_fast",  to: "users#create_fast"
   get "/main", to: "users#main"
   get "/check_user", to: "users#check_user"
+  get "/create_new_post", to: "users#create_post"
+  #get "/create_new_from_user", to: "users#create_new_from_user"
 
 end
