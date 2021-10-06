@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy] #check_user
+  before_action :check_login, only: %i[index new create]
+  before_action :is_same_user, only: %i[show edit update delete]
 
   # GET /users or /users.json
   def index
@@ -8,6 +10,10 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
+    if (check_login)
+    else 
+      return false
+    end
   end
 
   # GET /users/new
@@ -67,29 +73,34 @@ class UsersController < ApplicationController
 
   def main
     @ok = params[:ok]
-    puts "------param ok is #{@ok}"
+    #puts "------param ok is #{@ok}"
+    session[:user_id] = nil
   end
 
   def check_user
-    #works with main
-    #redirect_to "https://www.google.com/"
-    #puts "----------------"
-    #puts params[:email]
-    
-    #--------old version------------
-    @tmp = User.find_by(email: params[:email]).pass rescue nil
-    #if (@tmp == nil || @tmp != params[:pass])
-    if (@tmp == nil || @tmp.authenticate params[:pass] == nil)
-      redirect_to "/main?ok=error"
-    else redirect_to "/users/#{User.find_by(email: params[:email]).id}"
+    @logging_user = User.find_by(email: params[:email])
+    if (@logging_user == nil || @logging_user.authenticate(params[:pass]) == false) #authenticate return false
+      redirect_to "/main?ok=error", notice:"Email or Password is not correct!"
+      #after redirect, the program still execute the next lines till all func done then redirect
+      if (@logging_user) 
+        session[:user_id] = nil
+      end
+    else 
+      redirect_to "/users/#{User.find_by(email: params[:email]).id}", notice: "Welcome Back!! #{@logging_user.email}"
+      
+      #after login => create cookie
+      session[:user_id] = @logging_user.id
     end
 
-
+    #auto render here if there is no redirect or render
   end
 
   def create_post
-    @post = Post.create(user_id: params[:create_id])
-    puts @post.user_id
+    @user = User.find_by(id: params[:create_id])
+    if (is_same_user)
+      @post = Post.create(user_id: params[:create_id])
+      puts @post.user_id
+    end
   end
 
   private
@@ -98,9 +109,34 @@ class UsersController < ApplicationController
       @user = User.find(params[:id])
     end
 
+    def check_login
+      #direct :login do
+      #  "http://localhost:3000/main"
+      #end
+      if (session[:user_id]) 
+        return true
+      else 
+        redirect_to "http://localhost:3000/main", notice: "Please Login!"
+        #return false
+      end
+    end
+
+    def is_same_user
+      if (@user == nil || session[:user_id] != @user.id) 
+        if (@user == nil) 
+          redirect_to "http://localhost:3000/main", notice: "You are not logged in"
+        else
+          redirect_to "http://localhost:3000/main", notice: "You are not permitted to this content"
+        end
+      else
+        return true
+      end
+    end
+
     # Only allow a list of trusted parameters through.
     def user_params
       #dont for get to put param in this!!!!!!!!!!!!!!
       params.require(:user).permit(:email, :name, :birthday, :address, :postal_code, :pass, :password)
     end
+
 end
